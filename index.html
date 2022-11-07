@@ -35,7 +35,7 @@
 
             function txIsACoinjoin( tx ) {
                 if ( tx[ "vin" ].length < 3 || tx[ "vout" ].length < 2 ) return;
-                if ( tx[ "vin" ].length / tx[ "vout" ].length < 0.5 ) return;
+                if ( tx[ "vin" ].length / tx[ "vout" ].length < 0.67 ) return;
                 var output_values = [];
                 tx[ "vout" ].forEach( function( output ) {
                     if ( !( output.value in output_values ) ) {
