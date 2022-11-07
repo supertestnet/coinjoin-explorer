@@ -7,7 +7,7 @@ https://supertestnet.github.io/coinjoin-explorer/
 
 # To do
 
-* [x] Detect and do not display transactions that are not actually coinjoins but only a large transaction (such as from an exchange) that just happens to have more than 2 inputs and more than 2 outputs of the same value
+* [ ] Invent and implement more ways to filter out false positives
 * [ ] Detect when a transaction contains more than one set of coinjoins and display all of them
 * [ ] Make it look pretty like mempool.space
 * [ ] Make each coinjoined utxo clickable so you can learn info about it
