@@ -16,6 +16,17 @@
                 });
             }
 
+            async function getAllBlocks() {
+                var all_blocks = [];
+                var i; for ( i=0; i<1000000; i++ ) {
+                    var url = `https://mempool.space/api/block-height/${String( i )}`;
+                    var block = await getData( url );
+                    all_blocks.push( block );
+                    console.log( `block ${i}:`, block );
+                }
+                return all_blocks;
+            }
+
             async function getAllTransactionsInBlock( block, num_of_pages ) {
                 var all_txs_in_block = [];
                 var i; for ( i=0; i<num_of_pages; i++ ) {
@@ -31,58 +42,6 @@
                     });
                     if ( i == num_of_pages - 1 ) return all_txs_in_block;
                 }
-            }
-
-            function txIsACoinjoin( tx ) {
-                if ( tx[ "vin" ].length < 3 || tx[ "vout" ].length < 3 ) return;
-                if ( tx[ "vin" ].length / tx[ "vout" ].length < 0.67 ) return;
-                var output_values = [];
-                tx[ "vout" ].forEach( function( output ) {
-                    if ( !( output.value in output_values ) ) {
-                        output_values[ output.value ] = 0;
-                    } else {
-                        output_values[ output.value ] = output_values[ output.value ] + 1;
-                    }
-                });
-                if ( Object.keys( output_values ).length <= tx[ "vout" ].length - 2 ) return true;
-                return false;
-            }
-
-            function getCoinjoinValue( tx ) {
-                var output_values = {}
-                var highest_num = 0;
-                var cj_value = 0;
-                tx[ "vout" ].forEach( function( output ) {
-                    if ( !( output.value in output_values ) ) {
-                        output_values[ output.value ] = 0;
-                    } else {
-                        output_values[ output.value ] = output_values[ output.value ] + 1;
-                    }
-                });
-                Object.keys( output_values ).forEach( function( key ) {
-                    if ( output_values[ key ] <= highest_num ) return;
-                    highest_num = output_values[ key ];
-                    cj_value = Number( key );
-                });
-                return cj_value;
-            }
-
-            function txIsACoinjoinDebug( tx ) {
-                if ( tx[ "vin" ].length < 3 || tx[ "vout" ].length < 3 ) {
-                    //console.log( `no because not enough inputs or outputs. Inputs: ${tx[ "vin" ].length} Outputs: ${tx[ "vout" ].length} Txid: ${tx[ "txid" ]}` );
-                    return;
-                }
-                var output_values = {}
-                tx[ "vout" ].forEach( function( output ) {
-                    if ( !( output.value in output_values ) ) {
-                        output_values[ output.value ] = 0;
-                    } else {
-                        output_values[ output.value ] = output_values[ output.value ] + 1;
-                    }
-                });
-                if ( Object.keys( output_values ).length < tx[ "vout" ].length - 2 ) return true;
-                console.log( `no because too few identical output amounts. Output values length: ${output_values.length} Number of outputs: ${tx[ "vout" ].length} Txid: ${tx[ "txid" ]}` );
-                return;
             }
 
             async function getCoinjoinsInABlock( block ) {
@@ -111,15 +70,56 @@
                 return coinjoined_utxos;
             }
 
-            async function getAllBlocks() {
-                var all_blocks = [];
-                var i; for ( i=0; i<1000000; i++ ) {
-                    var url = `https://mempool.space/api/block-height/${String( i )}`;
-                    var block = await getData( url );
-                    all_blocks.push( block );
-                    console.log( `block ${i}:`, block );
+            function txIsACoinjoin( tx ) {
+                if ( tx[ "vin" ].length < 3 || tx[ "vout" ].length < 3 ) return;
+                if ( tx[ "vin" ].length / tx[ "vout" ].length < 0.67 ) return;
+                var output_values = [];
+                tx[ "vout" ].forEach( function( output ) {
+                    if ( !( output.value in output_values ) ) {
+                        output_values[ output.value ] = 0;
+                    } else {
+                        output_values[ output.value ] = output_values[ output.value ] + 1;
+                    }
+                });
+                if ( Object.keys( output_values ).length <= tx[ "vout" ].length - 2 ) return true;
+                return false;
+            }
+
+            function txIsACoinjoinDebug( tx ) {
+                if ( tx[ "vin" ].length < 3 || tx[ "vout" ].length < 3 ) {
+                    //console.log( `no because not enough inputs or outputs. Inputs: ${tx[ "vin" ].length} Outputs: ${tx[ "vout" ].length} Txid: ${tx[ "txid" ]}` );
+                    return;
                 }
-                return all_blocks;
+                var output_values = {}
+                tx[ "vout" ].forEach( function( output ) {
+                    if ( !( output.value in output_values ) ) {
+                        output_values[ output.value ] = 0;
+                    } else {
+                        output_values[ output.value ] = output_values[ output.value ] + 1;
+                    }
+                });
+                if ( Object.keys( output_values ).length < tx[ "vout" ].length - 2 ) return true;
+                console.log( `no because too few identical output amounts. Output values length: ${output_values.length} Number of outputs: ${tx[ "vout" ].length} Txid: ${tx[ "txid" ]}` );
+                return;
+            }
+
+            function getCoinjoinValue( tx ) {
+                var output_values = {}
+                var highest_num = 0;
+                var cj_value = 0;
+                tx[ "vout" ].forEach( function( output ) {
+                    if ( !( output.value in output_values ) ) {
+                        output_values[ output.value ] = 0;
+                    } else {
+                        output_values[ output.value ] = output_values[ output.value ] + 1;
+                    }
+                });
+                Object.keys( output_values ).forEach( function( key ) {
+                    if ( output_values[ key ] <= highest_num ) return;
+                    highest_num = output_values[ key ];
+                    cj_value = Number( key );
+                });
+                return cj_value;
             }
         </script>
     </head>
