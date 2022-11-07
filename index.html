@@ -34,7 +34,7 @@
             }
 
             function txIsACoinjoin( tx ) {
-                if ( tx[ "vin" ].length < 3 || tx[ "vout" ].length < 2 ) return;
+                if ( tx[ "vin" ].length < 3 || tx[ "vout" ].length < 3 ) return;
                 if ( tx[ "vin" ].length / tx[ "vout" ].length < 0.67 ) return;
                 var output_values = [];
                 tx[ "vout" ].forEach( function( output ) {
@@ -44,7 +44,7 @@
                         output_values[ output.value ] = output_values[ output.value ] + 1;
                     }
                 });
-                if ( Object.keys( output_values ).length < tx[ "vout" ].length - 2 ) return true;
+                if ( Object.keys( output_values ).length <= tx[ "vout" ].length - 2 ) return true;
                 return false;
             }
 
