@@ -12,3 +12,4 @@ https://supertestnet.github.io/coinjoin-explorer/
 * [ ] Make it look pretty like mempool.space
 * [ ] Make each coinjoined utxo clickable so you can learn info about it
 * [ ] For each utxo, say how many coinjoins I can detect it was in
+* [ ] Add charts about coinjoin usage, including one that shows coinjoin usage over time
