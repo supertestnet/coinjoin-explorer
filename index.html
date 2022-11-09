@@ -2,6 +2,22 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <style>
+            * {
+                box-sizing: border-box;
+                font-size: 1.15em;
+                font-family: Arial, sans-serif;
+            }
+            html {
+                max-width: 70ch;
+                padding: 3em 1em;
+                margin: auto;
+                line-height: 1.25;
+            }
+            .content {
+                overflow-wrap: break-word;
+            }
+        </style>
         <script>
             function getData( url ) {
                 return new Promise( function( resolve, reject ) {
